@@ -15,7 +15,7 @@ RUN apt-get update && apt-get dist-upgrade -y && \
         php7.1-imagick \
         php7.1-mbstring \
         php7.1-mcrypt \
-        php7.1-memcached \
+        php7.1-memcache \
         php7.1-mysql \
         php7.1-pdo \
         php7.1-sqlite3 \
