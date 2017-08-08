@@ -15,15 +15,25 @@ RUN apt-get update && apt-get dist-upgrade -y && \
         php7.1-imagick \
         php7.1-mbstring \
         php7.1-mcrypt \
-        php7.1-memcache \
+        php7.1-dev git pkg-config build-essential libmemcached-dev \
         php7.1-mysql \
         php7.1-pdo \
         php7.1-sqlite3 \
         nginx
+
+RUN cd ~ && \
+    git clone https://github.com/php-memcached-dev/php-memcached.git && \
+    cd php-memcached && \
+    git checkout php7 && \
+    phpize && \
+    ./configure --disable-memcached-sasl && \
+    make && \
+    make install && \
+    cd ~ && \
+    rm -rf ~/php-memcached
 
 RUN docker-php-ext-configure mbstring
 RUN docker-php-ext-install mbstring zip
 RUN docker-php-ext-install pdo pdo_mysql
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && composer global require --prefer-dist "fxp/composer-asset-plugin:~1.0"
-
