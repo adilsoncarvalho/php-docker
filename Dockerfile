@@ -1,13 +1,20 @@
 FROM php:7.1.4-fpm
 
 RUN apt-get update && apt-get dist-upgrade -y && \
-    # DEPENDENCIES #############################################################
-    apt-get install -y wget curl apt-transport-https ca-certificates libpcre3-dev && \
-    # PHP DEB.SURY.CZ ##########################################################
-    wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg && \
-    echo "deb https://packages.sury.org/php/ jessie main" > /etc/apt/sources.list.d/php.list && \
-    apt-get update && \
     apt-get install -y --no-install-recommends \
+      wget apt-transport-https ca-certificates libpcre3-dev
+
+# NewRelic
+# ENV DEBIAN_FRONTEND=noninteractive
+RUN curl https://download.newrelic.com/548C16BF.gpg | apt-key add -
+RUN echo "deb http://apt.newrelic.com/debian/ newrelic non-free" > /etc/apt/sources.list.d/newrelic.list
+
+# PHP DEB.SURY.CZ ##########################################################
+RUN curl https://packages.sury.org/php/apt.gpg | apt-key add -
+RUN echo "deb https://packages.sury.org/php/ jessie main" > /etc/apt/sources.list.d/php.list
+
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
         zlibc \
         zlib1g \
         zlib1g-dev \
@@ -19,6 +26,7 @@ RUN apt-get update && apt-get dist-upgrade -y && \
         php7.1-mysql \
         php7.1-pdo \
         php7.1-sqlite3 \
+        newrelic-php5 \
         nginx
 
 RUN cd ~ && \
@@ -31,6 +39,9 @@ RUN cd ~ && \
     make install && \
     cd ~ && \
     rm -rf ~/php-memcached
+
+COPY newrelic-boot-setup.sh /usr/local/sbin/newrelic-boot-setup.sh
+RUN chmod +x /usr/local/sbin/newrelic-boot-setup.sh
 
 RUN docker-php-ext-configure mbstring
 RUN docker-php-ext-install mbstring zip
