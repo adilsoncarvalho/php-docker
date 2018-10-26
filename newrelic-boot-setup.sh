@@ -11,7 +11,7 @@ if [ $NEW_RELIC_APP_NAME ]; then
   echo "[INFO] Given app name defined at NEW_RELIC_APP_NAME=${NEW_RELIC_APP_NAME}"
 else
   echo "[WARN] You can define the app name using the env var NEW_RELIC_APP_NAME"
-  NEW_RELIC_APP_NAME=$(hostname | sed -E 's/-[a-zA-Z0-9]{10,}-[a-zA-Z0-9]{5,}$//')
+  NEW_RELIC_APP_NAME=$(hostname | sed 's/-[a-zA-Z0-9]*-[a-zA-Z0-9]*$//')
   echo "[WARN] No app name defined: assuming ${NEW_RELIC_APP_NAME}"
 fi
 
